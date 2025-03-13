@@ -20,12 +20,14 @@ def check_path_type(db_url: DatabaseURL) -> int:
 
     if is_url(db_url):
         return 0
-    elif is_relative_path(db_url.database):
+
+    if is_relative_path(db_url.database):
         return 1
-    elif is_absolute_path(db_url.database):
+
+    if is_absolute_path(db_url.database):
         return 2
-    else:
-        return 3
+
+    return 3
 
 
 def test_db_prefix(db_url: DatabaseURL) -> DatabaseURL:
@@ -33,11 +35,12 @@ def test_db_prefix(db_url: DatabaseURL) -> DatabaseURL:
 
     if path_type == 0:
         return db_url.replace(database="test_" + db_url.database)
-    elif path_type == 1 or path_type == 2:
+
+    if path_type in (1, 2):
         db_schema = db_url.scheme
         base_path, db_name = os.path.split(str(db_url.database))
         test_db_name = "test_" + db_name
 
         return DatabaseURL(f"{db_schema}:///{base_path}/{test_db_name}")
-    else:
-        raise Exception("Invalid Database URL")
+
+    raise ValueError("Invalid Database URL")
