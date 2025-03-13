@@ -11,6 +11,16 @@ Site = Table(
     Column("total_views", Integer)
 )
 
+Page = Table(
+    "pages",
+    metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True, index=True),
+    Column("url", String, nullable=False, unique=True, index=True),
+    Column("unique_visitors", Integer),
+    Column("total_views", Integer),
+    Column("site_id", Integer, ForeignKey("sites.id"), nullable=False)
+)
+
 Client = Table(
     "clients",
     metadata,

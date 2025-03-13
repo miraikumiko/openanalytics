@@ -7,7 +7,7 @@ from starlette.middleware.cors import CORSMiddleware
 from openanalytics.config import HOST, PORT
 from openanalytics.database import run_migrations
 from openanalytics.routers import routes
-from openanalytics.auth import AuthBackend
+from openanalytics.utils.auth import AuthBackend
 
 middleware = [
     Middleware(

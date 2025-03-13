@@ -29,7 +29,6 @@ const data = {
 fetch(url, {
     method: "POST",
     headers: {
-        "Content-Type": "application/json",
         "Token": "XXXXXXXX"
     },
     body: JSON.stringify(data)
