@@ -1,6 +1,6 @@
 from starlette.config import Config
 from databases import DatabaseURL
-from openanalytics.utils.path import test_db_prefix
+from openanalytics.utils.db import test_db_prefix
 
 config = Config("/etc/openanalytics.conf")
 

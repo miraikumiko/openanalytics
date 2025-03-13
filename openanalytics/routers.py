@@ -1,3 +1,4 @@
+from datetime import date
 from json.decoder import JSONDecodeError
 from starlette.authentication import requires
 from starlette.requests import Request
@@ -30,6 +31,9 @@ async def analytics(request: Request):
     os = user_agent.os.family
     browser = user_agent.browser.family
 
+    client = await database.fetch_one(Client.select().where(Client.c.ip == ip))
+    site_visitor = 0 if client else 1
+
     await database.execute(
         Client.insert().values(
             ip=ip,
@@ -38,17 +42,15 @@ async def analytics(request: Request):
             browser=browser,
             referrer=referrer,
             page_url=page_url,
+            visited_at=date.today(),
             site_id=site.id
         )
     )
 
-    client = await database.fetch_one(Client.select().where(Client.c.ip == ip))
-    site_unique_visitor = 0 if client else 1
-
     await database.execute(
         Site.update().where(Site.c.id == site.id).values(
-            unique_visitors=site.unique_visitors + site_unique_visitor,
-            total_views=site.total_views + 1
+            visitors=site.visitors + site_visitor,
+            views=site.views + 1
         )
     )
 
@@ -56,20 +58,20 @@ async def analytics(request: Request):
 
     if page:
         client = await database.fetch_one(Client.select().where(Client.c.page_url == page_url))
-        page_unique_visitor = 0 if client else 1
+        page_visitor = 0 if client else 1
 
         await database.execute(
             Page.update().where(Page.c.id == page.id).values(
-                unique_visitors=page.unique_visitors + page_unique_visitor,
-                total_views=page.total_views + 1
+                visitors=page.visitors + page_visitor,
+                views=page.views + 1
             )
         )
     else:
         await database.execute(
             Page.insert().values(
                 url=page_url,
-                unique_visitors=1,
-                total_views=1,
+                visitors=1,
+                views=1,
                 site_id=site.id
             )
         )
