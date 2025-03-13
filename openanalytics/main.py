@@ -1,13 +1,19 @@
 import contextlib
 import uvicorn
 from starlette.applications import Starlette
+from starlette.routing import Mount
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from openanalytics.config import HOST, PORT
 from openanalytics.database import run_migrations
-from openanalytics.routers import routes
+from openanalytics.routes.api import api_routes
 from openanalytics.utils.auth import AuthBackend
+from openanalytics.utils.scheduler import scheduler_start
+
+routes = [
+    Mount("/api", routes=api_routes)
+]
 
 middleware = [
     Middleware(
@@ -26,8 +32,8 @@ middleware = [
 
 @contextlib.asynccontextmanager
 async def lifespan(_):
+    await scheduler_start()
     await run_migrations()
-
     yield
 
 

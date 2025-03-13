@@ -12,7 +12,7 @@ async function getIpAndCountry() {
 }
 
 
-const url = "https://analiytics.example.com";
+const url = "https://analiytics.example.com/api/send";
 const referrer = document.referrer;
 const userAgent = navigator.userAgent;
 const pageUrl = window.location.href;

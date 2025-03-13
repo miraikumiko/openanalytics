@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Table, Column, Integer, Float, String, Date, ForeignKey
 from openanalytics.database import metadata
 
 Site = Table(
@@ -18,6 +18,14 @@ Page = Table(
     Column("url", String, nullable=False, unique=True, index=True),
     Column("visitors", Integer),
     Column("views", Integer),
+    Column("site_id", Integer, ForeignKey("sites.id"), nullable=False)
+)
+
+Stat = Table(
+    "stats",
+    metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True, index=True),
+    Column("avg_views_per_visitor", Float),
     Column("site_id", Integer, ForeignKey("sites.id"), nullable=False)
 )
 

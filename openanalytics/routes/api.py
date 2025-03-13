@@ -79,6 +79,6 @@ async def analytics(request: Request):
     return JSONResponse({"status": "ok"})
 
 
-routes = [
-    Route("/", analytics, methods=["POST"])
+api_routes = [
+    Route("/send", analytics, methods=["POST"])
 ]
