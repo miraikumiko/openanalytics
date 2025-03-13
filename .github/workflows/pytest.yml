@@ -16,4 +16,4 @@ jobs:
         pip install ".[dev]"
     - name: Run tests
       run: |
-        pytest
+        DATABASE_URL=sqlite:///./openanalytics.db pytest
