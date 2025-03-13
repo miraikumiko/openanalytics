@@ -24,8 +24,8 @@ async def test_analytics(http_client: AsyncClient) -> None:
         Site.insert().values(
             domain=DOMAIN,
             token=TOKEN,
-            unique_visitors=0,
-            total_views=0
+            visitors=0,
+            views=0
         )
     )
 
