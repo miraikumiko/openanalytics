@@ -32,7 +32,6 @@ async def run_migrations(url: DatabaseURL):
         await conn.run_sync(metadata.create_all)
 
     await conn.close()
-    await database.disconnect()
 
 
 async def drop_database(url: DatabaseURL):
