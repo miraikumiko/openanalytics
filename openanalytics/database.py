@@ -26,12 +26,14 @@ async def run_migrations(url: DatabaseURL):
     if url.database not in db_names:
         await conn.execute(f"CREATE DATABASE {url.database}")
 
+    await conn.close()
+
     engine = create_async_engine(str(url))
 
     async with engine.begin() as conn:
         await conn.run_sync(metadata.create_all)
 
-    await conn.close()
+    await database.disconnect()
 
 
 async def drop_database(url: DatabaseURL):
@@ -46,7 +48,9 @@ async def drop_database(url: DatabaseURL):
     db_names = [db["datname"] for db in databases]
 
     if url.database in db_names:
+        await conn.execute(f"""
+            SELECT pg_terminate_backend(pid)
+            FROM pg_stat_activity
+            WHERE datname = '{url.database}' AND pid <> pg_backend_pid();
+        """)
         await conn.execute(f"DROP DATABASE {url.database}")
-
-    await conn.close()
-    await database.disconnect()
