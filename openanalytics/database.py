@@ -31,8 +31,8 @@ async def run_migrations(url: DatabaseURL):
     async with engine.begin() as conn:
         await conn.run_sync(metadata.create_all)
 
-    conn.close()
-    database.disconnect()
+    await conn.close()
+    await database.disconnect()
 
 
 async def drop_database(url: DatabaseURL):
@@ -49,5 +49,5 @@ async def drop_database(url: DatabaseURL):
     if url.database in db_names:
         await conn.execute(f"DROP DATABASE {url.database}")
 
-    conn.close()
-    database.disconnect()
+    await conn.close()
+    await database.disconnect()
