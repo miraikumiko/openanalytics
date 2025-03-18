@@ -7,9 +7,10 @@ from starlette.routing import Route
 from user_agents import parse as ua_parse
 from openanalytics.database import database
 from openanalytics.models import Site, Page, Client
+from openanalytics.utils.statistics import avg_views_per_visitor
 
 
-@requires("authenticated")
+@requires("site_token")
 async def analytics(request: Request):
     site = getattr(request.state, "site", None)
 
@@ -79,6 +80,14 @@ async def analytics(request: Request):
     return JSONResponse({"status": "ok"})
 
 
+@requires("authenticated")
+async def stats(request: Request):
+    avg_views = await avg_views_per_visitor()
+
+    return JSONResponse({"avg_views": avg_views})
+
+
 api_routes = [
-    Route("/send", analytics, methods=["POST"])
+    Route("/send", analytics, methods=["POST"]),
+    Route("/stats", stats, methods=["GET"])
 ]

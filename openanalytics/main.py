@@ -5,11 +5,11 @@ from starlette.routing import Mount
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.cors import CORSMiddleware
-from openanalytics.config import HOST, PORT
-from openanalytics.database import run_migrations
+from openanalytics.config import HOST, PORT, DATABASE_URL
+from openanalytics.database import database, run_migrations
 from openanalytics.routes.api import api_routes
-from openanalytics.utils.auth import AuthBackend
-from openanalytics.utils.scheduler import scheduler_start
+from openanalytics.utils.auth import CustomAuthBackend, BearerAuthBackend, SiteTokenBackend
+
 
 routes = [
     Mount("/api", routes=api_routes)
@@ -18,7 +18,10 @@ routes = [
 middleware = [
     Middleware(
         AuthenticationMiddleware,
-        backend=AuthBackend()
+        backend=CustomAuthBackend(
+            backend1=BearerAuthBackend(),
+            backend2=SiteTokenBackend()
+        )
     ),
     Middleware(
         CORSMiddleware,
@@ -32,9 +35,10 @@ middleware = [
 
 @contextlib.asynccontextmanager
 async def lifespan(_):
-    await scheduler_start()
-    await run_migrations()
+    await run_migrations(DATABASE_URL)
+    await database.connect()
     yield
+    await database.disconnect()
 
 
 app = Starlette(routes=routes, middleware=middleware, lifespan=lifespan)

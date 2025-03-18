@@ -3,17 +3,21 @@ name: Pylint
 on: [push]
 
 jobs:
-  build:
+  pylint:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-    - name: Install dependencies
-      run: |
-        pip install -U pip
-        pip install ".[dev]"
-    - name: Analysing the code with pylint
-      run: |
-        pylint --disable=no-member,wildcard-import,unused-wildcard-import,unnecessary-pass,wrong-import-position,redefined-outer-name,unused-argument,unused-import,invalid-name,too-few-public-methods,not-callable $(git ls-files '*.py')
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          pip install ".[dev]"
+
+      - name: Analysing the code with pylint
+        run: |
+          pylint --disable=no-member,wildcard-import,unused-wildcard-import,unnecessary-pass,wrong-import-position,redefined-outer-name,unused-argument,unused-import,invalid-name,too-few-public-methods,not-callable $(git ls-files '*.py')

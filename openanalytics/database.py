@@ -1,17 +1,47 @@
-import databases
-import sqlalchemy
-from alembic.config import Config as AlembicConfig
-from alembic import command
+import asyncpg
+from databases import Database, DatabaseURL
+from sqlalchemy import MetaData
+from sqlalchemy.ext.asyncio import create_async_engine
 from openanalytics.config import TESTING, DATABASE_URL, TEST_DATABASE_URL
 
-metadata = sqlalchemy.MetaData()
+metadata = MetaData()
 
 if TESTING:
-    database = databases.Database(TEST_DATABASE_URL)
+    database = Database(TEST_DATABASE_URL)
 else:
-    database = databases.Database(DATABASE_URL)
+    database = Database(DATABASE_URL)
 
 
-async def run_migrations():
-    alembic_cfg = AlembicConfig("alembic.ini")
-    command.upgrade(alembic_cfg, "head")
+async def run_migrations(url: DatabaseURL):
+    conn = await asyncpg.connect(
+        user=url.username,
+        password=url.password,
+        database="postgres",
+        host=url.hostname
+    )
+
+    databases = await conn.fetch("SELECT datname FROM pg_database")
+    db_names = [db["datname"] for db in databases]
+
+    if url.database not in db_names:
+        await conn.execute(f"CREATE DATABASE {url.database}")
+
+    engine = create_async_engine(str(url))
+
+    async with engine.begin() as conn:
+        await conn.run_sync(metadata.create_all)
+
+
+async def drop_database(url: DatabaseURL):
+    conn = await asyncpg.connect(
+        user=url.username,
+        password=url.password,
+        database="postgres",
+        host=url.hostname
+    )
+
+    databases = await conn.fetch("SELECT datname FROM pg_database")
+    db_names = [db["datname"] for db in databases]
+
+    if url.database in db_names:
+        await conn.execute(f"DROP DATABASE {url.database}")

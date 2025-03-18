@@ -1,5 +1,15 @@
-from sqlalchemy import Table, Column, Integer, Float, String, Date, ForeignKey
+from sqlalchemy import Table, Column, Integer, String, Boolean, Date, ForeignKey
 from openanalytics.database import metadata
+
+User = Table(
+    "users",
+    metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True, index=True),
+    Column("username", String, nullable=False, unique=True, index=True),
+    Column("password", String, nullable=False),
+    Column("token", String, unique=True, index=True),
+    Column("is_admin", Boolean, nullable=False)
+)
 
 Site = Table(
     "sites",
@@ -18,14 +28,6 @@ Page = Table(
     Column("url", String, nullable=False, unique=True, index=True),
     Column("visitors", Integer),
     Column("views", Integer),
-    Column("site_id", Integer, ForeignKey("sites.id"), nullable=False)
-)
-
-Stat = Table(
-    "stats",
-    metadata,
-    Column("id", Integer, primary_key=True, autoincrement=True, index=True),
-    Column("avg_views_per_visitor", Float),
     Column("site_id", Integer, ForeignKey("sites.id"), nullable=False)
 )
 

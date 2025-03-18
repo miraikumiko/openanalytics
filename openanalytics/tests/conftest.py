@@ -1,13 +1,11 @@
 import pytest
 from starlette.config import environ
-from sqlalchemy import create_engine
-from sqlalchemy_utils import database_exists, create_database, drop_database
 from httpx import AsyncClient, ASGITransport
 
 environ["TESTING"] = "true"
 
 from openanalytics.config import HOST, PORT, TEST_DATABASE_URL
-from openanalytics.database import metadata, database
+from openanalytics.database import database, run_migrations, drop_database
 from openanalytics.main import app
 
 
@@ -20,13 +18,9 @@ async def lifespan():
 
 @pytest.fixture(scope="session", autouse=True)
 async def create_test_database():
-    url = str(TEST_DATABASE_URL)
-    engine = create_engine(url)
-    assert not database_exists(url), "Test database already exists. Aborting tests."
-    create_database(url)
-    metadata.create_all(engine)
+    await run_migrations(TEST_DATABASE_URL)
     yield
-    drop_database(url)
+    await drop_database(TEST_DATABASE_URL)
 
 
 @pytest.fixture(scope="session")
