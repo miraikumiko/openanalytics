@@ -43,7 +43,7 @@ async def get_sources(clients) -> dict:
 async def get_pages(clients) -> dict:
     page_urls = [client["page_url"] for client in clients]
     page_url_counts = Counter(page_urls)
-    pages = {page_url: count for page_url, count in page_url_counts.items()}
+    pages = dict(page_url_counts.items())
 
     return pages
 
@@ -51,7 +51,7 @@ async def get_pages(clients) -> dict:
 async def get_locations(clients) -> dict:
     countries = [client["country"] for client in clients]
     country_counts = Counter(countries)
-    locations = {country: count for country, count in country_counts.items()}
+    locations = dict(country_counts.items())
 
     return locations
 
@@ -59,10 +59,10 @@ async def get_locations(clients) -> dict:
 async def get_devices(clients) -> dict:
     browser = [client["browser"] for client in clients]
     browser_counts = Counter(browser)
-    browsers = {browser: count for browser, count in browser_counts.items()}
+    browsers = dict(browser_counts.items())
     os = [client["os"] for client in clients]
     os_counts = Counter(os)
-    operating_systems = {os: count for os, count in os_counts.items()}
+    operating_systems = dict(os_counts.items())
 
     return {"browsers": browsers, "operating_systems": operating_systems}
 
