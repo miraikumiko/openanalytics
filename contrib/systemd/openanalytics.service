@@ -1,0 +1,11 @@
+[Unit]
+Description=Open Analytics
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/openanalytics
+
+[Install]
+WantedBy=multi-user.target
