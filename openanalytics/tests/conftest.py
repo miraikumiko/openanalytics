@@ -4,7 +4,7 @@ from httpx import AsyncClient, ASGITransport
 
 environ["TESTING"] = "true"
 
-from openanalytics.config import HOST, PORT, TEST_DATABASE_URL
+from openanalytics.config import HOST, PORT, DATABASE_TEST_URL
 from openanalytics.database import database, run_migrations, drop_database
 from openanalytics.main import app
 
@@ -18,9 +18,9 @@ async def lifespan():
 
 @pytest.fixture(scope="session", autouse=True)
 async def create_test_database():
-    await run_migrations(TEST_DATABASE_URL)
+    await run_migrations(DATABASE_TEST_URL)
     yield
-    await drop_database(TEST_DATABASE_URL)
+    await drop_database(DATABASE_TEST_URL)
 
 
 @pytest.fixture(scope="session")

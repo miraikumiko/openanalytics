@@ -2,12 +2,12 @@ import asyncpg
 from databases import Database, DatabaseURL
 from sqlalchemy import MetaData
 from sqlalchemy.ext.asyncio import create_async_engine
-from openanalytics.config import TESTING, DATABASE_URL, TEST_DATABASE_URL
+from openanalytics.config import TESTING, DATABASE_URL, DATABASE_TEST_URL
 
 metadata = MetaData()
 
 if TESTING:
-    database = Database(TEST_DATABASE_URL)
+    database = Database(DATABASE_TEST_URL)
 else:
     database = Database(DATABASE_URL)
 

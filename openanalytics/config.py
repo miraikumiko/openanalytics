@@ -10,4 +10,4 @@ HOST = config("HOST", default="127.0.0.1")
 PORT = config("PORT", cast=int, default=8000)
 
 DATABASE_URL = config("DATABASE_URL", cast=DatabaseURL, default=DatabaseURL("postgresql+asyncpg://openanalytics:openanalytics@localhost/openanalytics"))
-TEST_DATABASE_URL = config("TEST_DATABASE_URL", cast=DatabaseURL, default=DATABASE_URL.replace(database="test_" + DATABASE_URL.database))
+DATABASE_TEST_URL = config("DATABASE_TEST_URL", cast=DatabaseURL, default=DATABASE_URL.replace(database="test_" + DATABASE_URL.database))
